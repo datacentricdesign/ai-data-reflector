@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Data Reflector</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/wizard.css">
+  <link rel="stylesheet" href="css/timeline.css">
+  <link rel="stylesheet" href="css/forms.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>AI Data Reflector</h1>
+      <p class="tagline">Critically reflect on your AI usage</p>
+    </header>
+
+    <nav class="wizard-nav" aria-label="Reflection steps">
+      <ol class="wizard-steps wizard-steps-6">
+        <li class="wizard-step" data-step="description">
+          <span class="step-number">1</span>
+          <span class="step-label">Description</span>
+        </li>
+        <li class="wizard-step" data-step="feelings">
+          <span class="step-number">2</span>
+          <span class="step-label">Feelings</span>
+        </li>
+        <li class="wizard-step" data-step="evaluation">
+          <span class="step-number">3</span>
+          <span class="step-label">Evaluation</span>
+        </li>
+        <li class="wizard-step" data-step="analysis">
+          <span class="step-number">4</span>
+          <span class="step-label">Analysis</span>
+        </li>
+        <li class="wizard-step" data-step="conclusion">
+          <span class="step-number">5</span>
+          <span class="step-label">Conclusion</span>
+        </li>
+        <li class="wizard-step" data-step="action">
+          <span class="step-number">6</span>
+          <span class="step-label">Action Plan</span>
+        </li>
+      </ol>
+    </nav>
+
+    <main class="wizard-content">
+      <!-- Step 1: Description - "What happened?" -->
+      <section class="wizard-panel" data-panel="description">
+        <div class="panel-header">
+          <h2>Description: What Happened?</h2>
+          <p>Import your AI conversation data and describe your usage factually.</p>
+        </div>
+        <div class="panel-body">
+          <div class="gibbs-stage-layout">
+            <!-- Data Activity Section -->
+            <div class="data-activity-section">
+              <h3 class="section-title">
+                <span class="section-icon">📊</span>
+                Your AI Usage Data
+              </h3>
+
+              <div class="platform-tabs" role="tablist">
+                <button class="platform-tab active" role="tab" data-platform="chatgpt" aria-selected="true">ChatGPT</button>
+                <button class="platform-tab" role="tab" data-platform="claude" aria-selected="false">Claude</button>
+              </div>
+
+              <div class="platform-content" data-platform-content="chatgpt">
+                <div class="instructions">
+                  <h4>How to export from ChatGPT</h4>
+                  <ol>
+                    <li>Go to <a href="https://chat.openai.com" target="_blank" rel="noopener">chat.openai.com</a></li>
+                    <li>Click your profile icon (top right)</li>
+                    <li>Select <strong>Settings</strong></li>
+                    <li>Click <strong>Data Controls</strong></li>
+                    <li>Click <strong>Export</strong> under "Export Data"</li>
+                    <li>Click <strong>Confirm export</strong></li>
+                    <li>Wait for email with download link</li>
+                    <li>Download and extract the ZIP file</li>
+                    <li>Upload <code>conversations.json</code> below</li>
+                  </ol>
+                </div>
+              </div>
+
+              <div class="platform-content hidden" data-platform-content="claude">
+                <div class="instructions">
+                  <h4>How to export from Claude</h4>
+                  <ol>
+                    <li>Go to <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a></li>
+                    <li>Click your initials (bottom left)</li>
+                    <li>Select <strong>Settings</strong></li>
+                    <li>Navigate to <strong>Account</strong></li>
+                    <li>Click <strong>Export Data</strong></li>
+                    <li>Wait for email with download link (may take up to 24 hours)</li>
+                    <li>Download and upload the JSON file below</li>
+                  </ol>
+                  <p class="note"><strong>Note:</strong> If export is not available, you can use browser extensions like "Claude Export Tool" to export conversations.</p>
+                </div>
+              </div>
+
+              <div class="upload-zone" id="upload-zone">
+                <div class="upload-icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                </div>
+                <p class="upload-text">Drag and drop your export file here</p>
+                <p class="upload-subtext">or click to browse</p>
+                <input type="file" id="file-input" accept=".json,.zip" hidden>
+              </div>
+
+              <div class="import-status hidden" id="import-status">
+                <div class="import-summary">
+                  <h4>Your Imported Data</h4>
+                  <div class="import-stats" id="import-stats"></div>
+                </div>
+                <button class="btn btn-secondary" id="add-more-btn">Add more data</button>
+              </div>
+
+              <div class="session-management">
+                <h4>Session Backup &amp; Restore</h4>
+                <p class="session-description">Save your entire session (data, annotations, reflections) to continue later or on another device.</p>
+                <div class="session-actions">
+                  <div class="session-action">
+                    <button class="btn btn-secondary" id="backup-session-btn">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                      </svg>
+                      Backup Session
+                    </button>
+                    <span class="session-hint">Download a JSON file with all your data</span>
+                  </div>
+                  <div class="session-action">
+                    <button class="btn btn-secondary" id="restore-session-btn">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                      </svg>
+                      Restore Session
+                    </button>
+                    <input type="file" id="session-file-input" accept=".json" hidden>
+                    <span class="session-hint">Load a previously saved session</span>
+                  </div>
+                </div>
+                <div class="session-warning hidden" id="session-warning">
+                  <strong>Warning:</strong> Restoring a session will replace your current data.
+                  <button class="btn btn-small btn-warning" id="confirm-restore-btn">Confirm Replace</button>
+                  <button class="btn btn-small btn-secondary" id="cancel-restore-btn">Cancel</button>
+                  <button class="btn btn-small btn-secondary" id="merge-restore-btn">Merge Instead</button>
+                </div>
+
+                <div class="deleted-prompt hidden" id="deleted-conversations-prompt">
+                  <div class="deleted-prompt-content">
+                    <strong>Previously deleted conversations found</strong>
+                    <p><span id="deleted-count">0 conversations were</span> previously deleted and skipped:</p>
+                    <ul id="deleted-list"></ul>
+                    <p>Do you want to re-import them?</p>
+                  </div>
+                  <div class="deleted-prompt-actions">
+                    <button class="btn btn-small btn-primary" id="reimport-deleted-btn">Re-import</button>
+                    <button class="btn btn-small btn-secondary" id="skip-deleted-btn">Keep Deleted</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reflection Section -->
+            <div class="reflection-section" id="description-reflection">
+              <h3 class="section-title">
+                <span class="section-icon">📝</span>
+                Reflect: Describe Your AI Use
+              </h3>
+              <p class="reflection-intro">Based on your data, describe factually what happened with your AI usage. Don't judge yet—just document.</p>
+
+              <div class="reflection-prompts">
+                <div class="reflection-prompt">
+                  <label for="description-q1">Which AI tools did you use and for what purposes?</label>
+                  <p class="prompt-hint">e.g., ChatGPT for writing, Claude for coding, image generators for visuals</p>
+                  <textarea id="description-q1" class="reflection-textarea" data-stage="description" data-question="tools-purposes" placeholder="I used..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="description-q2">Looking at your conversation count and dates, how would you describe your usage frequency?</label>
+                  <p class="prompt-hint">Consider: Were there intense periods? Gaps? Patterns you notice?</p>
+                  <textarea id="description-q2" class="reflection-textarea" data-stage="description" data-question="frequency" placeholder="My usage was..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="description-q3">What types of tasks did you delegate to AI?</label>
+                  <p class="prompt-hint">e.g., research, writing drafts, debugging code, brainstorming ideas, explaining concepts</p>
+                  <textarea id="description-q3" class="reflection-textarea" data-stage="description" data-question="task-types" placeholder="I used AI for..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: Feelings - "What were you thinking and feeling?" -->
+      <section class="wizard-panel hidden" data-panel="feelings">
+        <div class="panel-header">
+          <h2>Feelings: What Were You Thinking and Feeling?</h2>
+          <p>Explore your emotional responses to AI use. Look at your timeline and recall how different periods felt.</p>
+        </div>
+        <div class="panel-body">
+          <div class="gibbs-stage-layout">
+            <!-- Data Activity Section -->
+            <div class="data-activity-section">
+              <h3 class="section-title">
+                <span class="section-icon">📅</span>
+                Your Usage Timeline
+              </h3>
+
+              <div class="stats-cards" id="stats-cards"></div>
+              <div class="timeline-container">
+                <h4>Activity Heatmap</h4>
+                <p class="heatmap-hint">Click on a day to filter conversations and recall how that period felt</p>
+                <div class="heatmap-wrapper">
+                  <div class="heatmap-months" id="heatmap-months"></div>
+                  <div class="heatmap-grid" id="heatmap-grid"></div>
+                  <div class="heatmap-legend">
+                    <span>Less</span>
+                    <div class="legend-cells">
+                      <div class="legend-cell" data-level="0"></div>
+                      <div class="legend-cell" data-level="1"></div>
+                      <div class="legend-cell" data-level="2"></div>
+                      <div class="legend-cell" data-level="3"></div>
+                      <div class="legend-cell" data-level="4"></div>
+                    </div>
+                    <span>More</span>
+                  </div>
+                </div>
+              </div>
+              <div class="charts-row">
+                <div class="chart-container">
+                  <h4>Conversations by Platform</h4>
+                  <div class="platform-chart" id="platform-chart"></div>
+                </div>
+                <div class="chart-container">
+                  <h4>Conversations by Month</h4>
+                  <div class="monthly-chart" id="monthly-chart"></div>
+                </div>
+              </div>
+              <div class="conversation-list-container">
+                <div class="list-header">
+                  <h4>Browse Conversations</h4>
+                  <div class="active-filter hidden" id="active-filter">
+                    <span class="filter-label">Showing:</span>
+                    <span class="filter-value" id="filter-value"></span>
+                    <button class="filter-clear" id="filter-clear" title="Clear filter">&times;</button>
+                  </div>
+                </div>
+                <div class="filters-bar">
+                  <input type="text" class="search-input" id="conversation-search" placeholder="Search conversations...">
+                  <select id="platform-filter">
+                    <option value="all">All Platforms</option>
+                    <option value="chatgpt">ChatGPT</option>
+                    <option value="claude">Claude</option>
+                  </select>
+                </div>
+                <div class="conversation-list" id="conversation-list"></div>
+              </div>
+            </div>
+
+            <!-- Reflection Section -->
+            <div class="reflection-section" id="feelings-reflection">
+              <h3 class="section-title">
+                <span class="section-icon">💭</span>
+                Reflect: Your Emotional Experience
+              </h3>
+              <p class="reflection-intro">Looking at your usage timeline, reflect on how using AI made you feel. There are no wrong feelings—be honest.</p>
+
+              <div class="reflection-prompts">
+                <div class="reflection-prompt">
+                  <label for="feelings-q1">How did using AI make you feel overall?</label>
+                  <p class="prompt-hint">e.g., empowered, dependent, anxious, efficient, guilty, creative, frustrated</p>
+                  <textarea id="feelings-q1" class="reflection-textarea" data-stage="feelings" data-question="overall-feelings" placeholder="Using AI made me feel..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="feelings-q2">Looking at periods of heavy use in your timeline, how did those times feel?</label>
+                  <p class="prompt-hint">Were you under deadline pressure? Excited about possibilities? Overwhelmed?</p>
+                  <textarea id="feelings-q2" class="reflection-textarea" data-stage="feelings" data-question="heavy-use-feelings" placeholder="During periods of heavy use, I felt..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="feelings-q3">How did you feel about the authenticity of work produced with AI assistance?</label>
+                  <p class="prompt-hint">Consider: ownership, pride, unease, satisfaction, guilt</p>
+                  <textarea id="feelings-q3" class="reflection-textarea" data-stage="feelings" data-question="authenticity-feelings" placeholder="When AI helped produce work, I felt..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="feelings-q4">Were there times you felt you "should" or "shouldn't" be using AI? What drove those feelings?</label>
+                  <p class="prompt-hint">Think about expectations, norms, or internal standards</p>
+                  <textarea id="feelings-q4" class="reflection-textarea" data-stage="feelings" data-question="should-feelings" placeholder="I felt I should/shouldn't use AI when..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3: Evaluation - "What was good and bad?" -->
+      <section class="wizard-panel hidden" data-panel="evaluation">
+        <div class="panel-header">
+          <h2>Evaluation: What Was Good and Bad?</h2>
+          <p>Make value judgments about your AI interactions. Tag and rate conversations to evaluate what worked.</p>
+        </div>
+        <div class="panel-body">
+          <!-- Annotation interface needs full width, so use stacked layout -->
+          <div class="gibbs-stage-stacked">
+            <!-- Data Activity Section - Annotation Interface -->
+            <div class="data-activity-section">
+              <h3 class="section-title">
+                <span class="section-icon">🏷️</span>
+                Annotate Your Conversations
+              </h3>
+
+              <div class="annotation-progress" id="annotation-progress">
+                <span class="progress-text">0 of 0 conversations annotated</span>
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+              </div>
+              <div class="annotation-layout">
+                <div class="conversation-browser">
+                  <div class="browser-filters">
+                    <select id="annotation-filter">
+                      <option value="all">All Conversations</option>
+                      <option value="unannotated">Unannotated Only</option>
+                      <option value="annotated">Annotated Only</option>
+                    </select>
+                  </div>
+                  <div class="browser-list" id="annotation-list"></div>
+                </div>
+                <div class="annotation-editor" id="annotation-editor">
+                  <div class="no-selection">
+                    <p>Select a conversation to annotate</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reflection Section - Below annotations -->
+            <div class="reflection-section" id="evaluation-reflection">
+              <h3 class="section-title">
+                <span class="section-icon">⚖️</span>
+                Reflect: Evaluate Your Experience
+              </h3>
+              <p class="reflection-intro">Based on your annotations, evaluate what worked well and what didn't.</p>
+
+              <div class="reflection-prompts reflection-prompts-grid">
+                <div class="reflection-prompt">
+                  <label for="evaluation-q1">Which AI interactions were most valuable to you? What made them successful?</label>
+                  <p class="prompt-hint">Think about specific conversations you tagged positively</p>
+                  <textarea id="evaluation-q1" class="reflection-textarea" data-stage="evaluation" data-question="most-valuable" placeholder="The most valuable interactions were..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="evaluation-q2">Which interactions were least helpful or counterproductive? Why?</label>
+                  <p class="prompt-hint">Consider wasted time, confusion, or wrong directions</p>
+                  <textarea id="evaluation-q2" class="reflection-textarea" data-stage="evaluation" data-question="least-helpful" placeholder="The least helpful interactions were..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="evaluation-q3">When did AI save you significant time or effort? When did it actually slow you down?</label>
+                  <p class="prompt-hint">Be specific about efficiency gains and losses</p>
+                  <textarea id="evaluation-q3" class="reflection-textarea" data-stage="evaluation" data-question="time-impact" placeholder="AI saved time when... but slowed me down when..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="evaluation-q4">Did you find errors or problems in AI outputs? How did you identify them?</label>
+                  <p class="prompt-hint">Consider: factual errors, bugs in code, inappropriate suggestions</p>
+                  <textarea id="evaluation-q4" class="reflection-textarea" data-stage="evaluation" data-question="errors-found" placeholder="I found these issues with AI outputs..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 4: Analysis - "What sense can you make of this?" -->
+      <section class="wizard-panel hidden" data-panel="analysis">
+        <div class="panel-header">
+          <h2>Analysis: What Sense Can You Make of This?</h2>
+          <p>Look for patterns in your annotations and dig deeper into why things happened as they did.</p>
+        </div>
+        <div class="panel-body">
+          <div class="gibbs-stage-layout">
+            <!-- Data Activity Section -->
+            <div class="data-activity-section">
+              <h3 class="section-title">
+                <span class="section-icon">📊</span>
+                Your Annotation Patterns
+              </h3>
+
+              <div class="tag-timeline-section" id="tag-timeline-section">
+                <h4>Tags Over Time</h4>
+                <div class="tag-timeline-wrapper">
+                  <div class="tag-timeline" id="tag-timeline">
+                    <div class="timeline-empty">Complete annotations in the Evaluation step to see patterns</div>
+                  </div>
+                </div>
+                <div class="tag-timeline-legend" id="tag-timeline-legend"></div>
+              </div>
+
+              <div class="pattern-insights" id="pattern-insights">
+                <h4>Tag Summary</h4>
+                <div class="tag-summary" id="tag-summary">
+                  <p class="no-data">Annotate conversations to see your tag distribution</p>
+                </div>
+              </div>
+
+              <div class="rating-insights" id="rating-insights">
+                <h4>Rating Distribution</h4>
+                <div class="rating-summary" id="rating-summary">
+                  <p class="no-data">Rate conversations to see your evaluation patterns</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reflection Section -->
+            <div class="reflection-section" id="analysis-reflection">
+              <h3 class="section-title">
+                <span class="section-icon">🔍</span>
+                Reflect: Analyze Deeper
+              </h3>
+              <p class="reflection-intro">Look at the patterns in your tags and ratings. What do they reveal about your AI use?</p>
+
+              <div class="reflection-prompts">
+                <div class="reflection-prompt">
+                  <label for="analysis-q1">Looking at your tag patterns, what do you notice? Why did AI succeed or fail in specific situations?</label>
+                  <p class="prompt-hint">Consider patterns across different types of tasks or time periods</p>
+                  <textarea id="analysis-q1" class="reflection-textarea" data-stage="analysis" data-question="patterns-noticed" placeholder="I notice that..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="analysis-q2">What strategies did you develop for getting better results from AI?</label>
+                  <p class="prompt-hint">Think about prompting techniques, verification habits, or workflow changes</p>
+                  <textarea id="analysis-q2" class="reflection-textarea" data-stage="analysis" data-question="strategies-developed" placeholder="I learned to..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="analysis-q3">How did AI affect your own learning or skill development?</label>
+                  <p class="prompt-hint">Consider: Did you learn new things? Miss learning opportunities? Develop new skills?</p>
+                  <textarea id="analysis-q3" class="reflection-textarea" data-stage="analysis" data-question="learning-impact" placeholder="AI affected my learning by..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="analysis-q4">What are the broader costs of your AI usage? (environmental, social, economic)</label>
+                  <p class="prompt-hint">AI consumes significant energy. Consider who benefits, who is left behind, data labor</p>
+                  <textarea id="analysis-q4" class="reflection-textarea" data-stage="analysis" data-question="broader-costs" placeholder="The broader implications include..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 5: Conclusion - "What else could you have done?" -->
+      <section class="wizard-panel hidden" data-panel="conclusion">
+        <div class="panel-header">
+          <h2>Conclusion: What Else Could You Have Done?</h2>
+          <p>Synthesize your insights and consider alternatives. What would you do differently?</p>
+        </div>
+        <div class="panel-body">
+          <div class="gibbs-stage-layout">
+            <!-- Data Activity Section -->
+            <div class="data-activity-section">
+              <h3 class="section-title">
+                <span class="section-icon">📋</span>
+                Your Journey Summary
+              </h3>
+
+              <div class="journey-summary" id="journey-summary">
+                <div class="summary-card">
+                  <h4>Description</h4>
+                  <div class="summary-content" id="summary-description">
+                    <p class="no-data">Complete the Description reflection to see summary</p>
+                  </div>
+                </div>
+                <div class="summary-card">
+                  <h4>Feelings</h4>
+                  <div class="summary-content" id="summary-feelings">
+                    <p class="no-data">Complete the Feelings reflection to see summary</p>
+                  </div>
+                </div>
+                <div class="summary-card">
+                  <h4>Evaluation</h4>
+                  <div class="summary-content" id="summary-evaluation">
+                    <p class="no-data">Complete the Evaluation reflection to see summary</p>
+                  </div>
+                </div>
+                <div class="summary-card">
+                  <h4>Analysis</h4>
+                  <div class="summary-content" id="summary-analysis">
+                    <p class="no-data">Complete the Analysis reflection to see summary</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reflection Section -->
+            <div class="reflection-section" id="conclusion-reflection">
+              <h3 class="section-title">
+                <span class="section-icon">💡</span>
+                Reflect: Draw Conclusions
+              </h3>
+              <p class="reflection-intro">Based on everything you've reflected on, what conclusions can you draw?</p>
+
+              <div class="reflection-prompts">
+                <div class="reflection-prompt">
+                  <label for="conclusion-q1">What alternatives to AI existed for the tasks you used it for?</label>
+                  <p class="prompt-hint">Consider: other tools, human help, doing it yourself, different approaches</p>
+                  <textarea id="conclusion-q1" class="reflection-textarea" data-stage="conclusion" data-question="alternatives" placeholder="Instead of AI, I could have..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="conclusion-q2">Were there times you should have used AI but didn't, or shouldn't have used it but did?</label>
+                  <p class="prompt-hint">Think about missed opportunities and overreliance</p>
+                  <textarea id="conclusion-q2" class="reflection-textarea" data-stage="conclusion" data-question="should-shouldnt" placeholder="Looking back, I should have..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="conclusion-q3">What skills might you have developed differently if you had used AI less (or more)?</label>
+                  <p class="prompt-hint">Consider both technical skills and meta-skills like problem-solving</p>
+                  <textarea id="conclusion-q3" class="reflection-textarea" data-stage="conclusion" data-question="skill-development" placeholder="If I had used AI differently, I might have..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="conclusion-q4">What would you tell a peer starting a similar project about AI use?</label>
+                  <p class="prompt-hint">Synthesize your key learnings into advice</p>
+                  <textarea id="conclusion-q4" class="reflection-textarea" data-stage="conclusion" data-question="peer-advice" placeholder="I would tell them..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 6: Action Plan - "What will you do going forward?" -->
+      <section class="wizard-panel hidden" data-panel="action">
+        <div class="panel-header">
+          <h2>Action Plan: How Will You Approach AI Going Forward?</h2>
+          <p>Commit to specific future actions based on your reflection, then export your complete reflection report.</p>
+        </div>
+        <div class="panel-body">
+          <div class="gibbs-stage-layout">
+            <!-- Reflection Section (primary focus on this step) -->
+            <div class="reflection-section reflection-section-primary" id="action-reflection">
+              <h3 class="section-title">
+                <span class="section-icon">🎯</span>
+                Your Action Plan
+              </h3>
+              <p class="reflection-intro">Based on your reflection, commit to specific actions for your future AI use.</p>
+
+              <div class="reflection-prompts">
+                <div class="reflection-prompt">
+                  <label for="action-q1">What personal guidelines or rules will you set for your future AI use?</label>
+                  <p class="prompt-hint">Be specific and actionable. What boundaries will you set?</p>
+                  <textarea id="action-q1" class="reflection-textarea" data-stage="action" data-question="guidelines" placeholder="My personal AI guidelines are..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="action-q2">In which specific situations will you choose NOT to use AI? Why?</label>
+                  <p class="prompt-hint">Consider learning opportunities, skill-building, authenticity concerns</p>
+                  <textarea id="action-q2" class="reflection-textarea" data-stage="action" data-question="not-use-ai" placeholder="I will not use AI when..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="action-q3">How will you maintain and develop your own skills while also using AI?</label>
+                  <p class="prompt-hint">Think about deliberate practice, verification habits, learning strategies</p>
+                  <textarea id="action-q3" class="reflection-textarea" data-stage="action" data-question="skill-maintenance" placeholder="To maintain my skills, I will..."></textarea>
+                </div>
+
+                <div class="reflection-prompt">
+                  <label for="action-q4">How will you stay informed as AI capabilities and limitations evolve?</label>
+                  <p class="prompt-hint">Consider sources of information, critical evaluation practices</p>
+                  <textarea id="action-q4" class="reflection-textarea" data-stage="action" data-question="stay-informed" placeholder="I will stay informed by..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="data-activity-section export-section">
+              <h3 class="section-title">
+                <span class="section-icon">📄</span>
+                Export Your Reflection
+              </h3>
+
+              <div class="export-preview" id="export-preview"></div>
+              <div class="export-actions">
+                <button class="btn btn-secondary" id="copy-markdown-btn">Copy to Clipboard</button>
+                <button class="btn btn-primary" id="download-btn">Download Markdown</button>
+              </div>
+              <div class="export-session-actions">
+                <div class="session-action-item">
+                  <button class="btn btn-secondary" id="export-backup-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="7 10 12 15 17 10"/>
+                      <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Backup Session
+                  </button>
+                  <span class="action-hint">Save your data to continue later</span>
+                </div>
+                <div class="session-action-item">
+                  <button class="btn btn-secondary btn-danger-outline" id="clear-session-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                    Clear Session
+                  </button>
+                  <span class="action-hint">Delete all data and start fresh</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="wizard-footer">
+      <button class="btn btn-secondary" id="prev-btn" disabled>Previous</button>
+      <button class="btn btn-primary" id="next-btn">Next</button>
+    </footer>
+
+    <div class="privacy-notice">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      <span>All data stays in your browser. Nothing is sent to any server.</span>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
