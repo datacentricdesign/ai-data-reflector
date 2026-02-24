@@ -64,6 +64,7 @@
               <div class="platform-tabs" role="tablist">
                 <button class="platform-tab active" role="tab" data-platform="chatgpt" aria-selected="true">ChatGPT</button>
                 <button class="platform-tab" role="tab" data-platform="claude" aria-selected="false">Claude</button>
+                <button class="platform-tab" role="tab" data-platform="copilot" aria-selected="false">Microsoft Copilot</button>
               </div>
 
               <div class="platform-content" data-platform-content="chatgpt">
@@ -96,6 +97,22 @@
                     <li>Download and upload the JSON file below</li>
                   </ol>
                   <p class="note"><strong>Note:</strong> If export is not available, you can use browser extensions like "Claude Export Tool" to export conversations.</p>
+                </div>
+              </div>
+
+              <div class="platform-content hidden" data-platform-content="copilot">
+                <div class="instructions">
+                  <h4>How to export from Microsoft Copilot</h4>
+                  <ol>
+                    <li>Go to <a href="https://account.microsoft.com/privacy/download-your-data" target="_blank" rel="noopener">account.microsoft.com/privacy/download-your-data</a></li>
+                    <li>Sign in with your Microsoft account</li>
+                    <li>Select <strong>Bing &amp; Cortana</strong> or <strong>Copilot</strong> from the data categories</li>
+                    <li>Click <strong>Create an archive</strong></li>
+                    <li>Wait for the email notification (may take several hours)</li>
+                    <li>Download and extract the ZIP archive</li>
+                    <li>Find and upload the <code>CopilotInteractions.json</code> or similar JSON file below</li>
+                  </ol>
+                  <p class="note"><strong>Note:</strong> The export file name and structure may vary. Any JSON file from the Copilot section of the Microsoft privacy download is supported.</p>
                 </div>
               </div>
 
@@ -262,6 +279,7 @@
                     <option value="all">All Platforms</option>
                     <option value="chatgpt">ChatGPT</option>
                     <option value="claude">Claude</option>
+                    <option value="copilot">Microsoft Copilot</option>
                   </select>
                 </div>
                 <div class="conversation-list" id="conversation-list"></div>

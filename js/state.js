@@ -185,7 +185,7 @@ class AppState {
       return null;
     }
 
-    const byPlatform = { chatgpt: 0, claude: 0 };
+    const byPlatform = { chatgpt: 0, claude: 0, copilot: 0 };
     const byMonth = {};
     const byDayOfWeek = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
     const byDate = {};

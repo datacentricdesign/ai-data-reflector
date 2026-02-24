@@ -185,43 +185,55 @@ function renderPlatformChart() {
   const stats = appState.getStatistics();
   const chatgpt = stats.byPlatform.chatgpt || 0;
   const claude = stats.byPlatform.claude || 0;
-  const total = chatgpt + claude;
+  const copilot = stats.byPlatform.copilot || 0;
+  const total = chatgpt + claude + copilot;
 
   if (total === 0) {
     platformChart.innerHTML = '<div class="empty-state">No data</div>';
     return;
   }
 
-  const chatgptPercent = Math.round((chatgpt / total) * 100);
-  const claudePercent = 100 - chatgptPercent;
+  // Build donut chart segments dynamically
+  // Circumference of r=40 circle ≈ 251.3
+  const circumference = 2 * Math.PI * 40;
+  const platforms = [
+    { key: 'chatgpt', count: chatgpt, label: 'ChatGPT', color: 'var(--color-chatgpt)' },
+    { key: 'claude', count: claude, label: 'Claude', color: 'var(--color-claude)' },
+    { key: 'copilot', count: copilot, label: 'Microsoft Copilot', color: 'var(--color-copilot)' }
+  ].filter(p => p.count > 0);
 
-  // Create donut chart using SVG
-  const chatgptAngle = (chatgpt / total) * 360;
+  let cumulativeAngle = -90; // Start from top
+  const segments = platforms.map(p => {
+    const fraction = p.count / total;
+    const dashLength = fraction * circumference;
+    const rotation = cumulativeAngle;
+    cumulativeAngle += fraction * 360;
+    return { ...p, dashLength, rotation, percent: Math.round(fraction * 100) };
+  });
+
+  const svgSegments = segments.map(seg => `
+    <circle cx="50" cy="50" r="40" fill="none" stroke="${seg.color}" stroke-width="20"
+            stroke-dasharray="${seg.dashLength.toFixed(2)} ${circumference.toFixed(2)}"
+            transform="rotate(${seg.rotation} 50 50)"/>
+  `).join('');
+
+  const legendItems = segments.map(seg => `
+    <div class="legend-item">
+      <div class="legend-color ${seg.key}"></div>
+      <span>${seg.label} (${seg.count} - ${seg.percent}%)</span>
+    </div>
+  `).join('');
 
   platformChart.innerHTML = `
     <svg class="donut-chart" viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="40" fill="none" stroke="var(--color-claude)" stroke-width="20"/>
-      <circle cx="50" cy="50" r="40" fill="none" stroke="var(--color-chatgpt)" stroke-width="20"
-              stroke-dasharray="${chatgptAngle * 2.51} 1000"
-              transform="rotate(-90 50 50)"/>
+      ${svgSegments}
       <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="var(--color-text)">
         ${total}
       </text>
       <text x="50" y="62" text-anchor="middle" font-size="6" fill="var(--color-text-muted)">total</text>
     </svg>
     <div class="platform-legend">
-      ${chatgpt > 0 ? `
-        <div class="legend-item">
-          <div class="legend-color chatgpt"></div>
-          <span>ChatGPT (${chatgpt} - ${chatgptPercent}%)</span>
-        </div>
-      ` : ''}
-      ${claude > 0 ? `
-        <div class="legend-item">
-          <div class="legend-color claude"></div>
-          <span>Claude (${claude} - ${claudePercent}%)</span>
-        </div>
-      ` : ''}
+      ${legendItems}
     </div>
   `;
 }
@@ -309,7 +321,7 @@ function renderConversationList(filter = {}) {
         <div class="conversation-info">
           <div class="conversation-title">${escapeHtml(conv.title)}</div>
           <div class="conversation-meta">
-            <span class="platform-badge ${conv.platform}">${conv.platform === 'chatgpt' ? 'ChatGPT' : 'Claude'}</span>
+            <span class="platform-badge ${conv.platform}">${conv.platform === 'chatgpt' ? 'ChatGPT' : conv.platform === 'claude' ? 'Claude' : 'Microsoft Copilot'}</span>
             <span>${conv.messageCount} messages</span>
           </div>
           ${preview ? `<div class="conversation-preview">${escapeHtml(preview)}</div>` : ''}

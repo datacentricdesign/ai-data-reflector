@@ -173,6 +173,12 @@
   background-color: rgba(217, 119, 6, 0.05);
 }
 
+.platform-tab[data-platform="copilot"].active {
+  border-color: var(--color-copilot);
+  color: var(--color-copilot);
+  background-color: rgba(0, 120, 212, 0.05);
+}
+
 /* Platform Content */
 .platform-content {
   animation: fadeIn var(--transition-normal);

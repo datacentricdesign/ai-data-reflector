@@ -25,6 +25,7 @@
   /* Platform colors */
   --color-chatgpt: #10a37f;
   --color-claude: #d97706;
+  --color-copilot: #0078d4;
 
   /* Heatmap colors */
   --heatmap-0: #ebedf0;
@@ -291,6 +292,11 @@ code {
 .platform-badge.claude {
   background-color: rgba(217, 119, 6, 0.1);
   color: var(--color-claude);
+}
+
+.platform-badge.copilot {
+  background-color: rgba(0, 120, 212, 0.1);
+  color: var(--color-copilot);
 }
 
 /* Responsive */

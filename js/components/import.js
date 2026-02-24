@@ -2,6 +2,7 @@
 import { appState } from '../state.js';
 import { parseChatGPT, isChatGPTFormat } from '../parsers/chatgpt-parser.js';
 import { parseClaude, isClaudeFormat } from '../parsers/claude-parser.js';
+import { parseCopilot, isCopilotFormat } from '../parsers/copilot-parser.js';
 import { formatDate, formatDateRange } from '../utils/date-utils.js';
 
 let uploadZone;
@@ -261,8 +262,11 @@ async function processFile(file) {
     } else if (isClaudeFormat(json)) {
       conversations = parseClaude(json);
       platform = 'claude';
+    } else if (isCopilotFormat(json)) {
+      conversations = parseCopilot(json);
+      platform = 'copilot';
     } else {
-      throw new Error('Unrecognized export format. Please upload a valid ChatGPT or Claude export file.');
+      throw new Error('Unrecognized export format. Please upload a valid ChatGPT, Claude, or Microsoft Copilot export file.');
     }
 
     if (conversations.length === 0) {
@@ -326,7 +330,8 @@ function showSuccess(platform, addedCount, duplicateCount = 0, deletedCount = 0)
 
   // Show status if new conversations were added
   if (addedCount > 0) {
-    let message = `Successfully imported ${addedCount} conversation${addedCount !== 1 ? 's' : ''} from ${platform === 'chatgpt' ? 'ChatGPT' : 'Claude'}`;
+    const platformName = platform === 'chatgpt' ? 'ChatGPT' : platform === 'claude' ? 'Claude' : 'Microsoft Copilot';
+    let message = `Successfully imported ${addedCount} conversation${addedCount !== 1 ? 's' : ''} from ${platformName}`;
 
     const skippedParts = [];
     if (duplicateCount > 0) {
@@ -440,6 +445,7 @@ function updateImportUI(state) {
     const stats = appState.getStatistics();
     const chatgptCount = stats.byPlatform.chatgpt || 0;
     const claudeCount = stats.byPlatform.claude || 0;
+    const copilotCount = stats.byPlatform.copilot || 0;
 
     importStats.innerHTML = `
       <div class="import-stat">
@@ -456,6 +462,12 @@ function updateImportUI(state) {
         <div class="import-stat">
           <span class="import-stat-value">${claudeCount}</span>
           <span class="import-stat-label">Claude</span>
+        </div>
+      ` : ''}
+      ${copilotCount > 0 ? `
+        <div class="import-stat">
+          <span class="import-stat-value">${copilotCount}</span>
+          <span class="import-stat-label">Copilot</span>
         </div>
       ` : ''}
       <div class="import-stat">

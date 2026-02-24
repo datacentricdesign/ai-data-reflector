@@ -164,6 +164,10 @@
   background-color: var(--color-claude);
 }
 
+.legend-color.copilot {
+  background-color: var(--color-copilot);
+}
+
 /* Monthly Chart (Bar) */
 .monthly-chart {
   height: 200px;
